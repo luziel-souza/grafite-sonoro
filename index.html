@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grafite Sonoro</title>
+<style>
+:root{
+ --teal:#45B8B2;
+ --teal-dark:#007F80;
+ --orange:#E94716;
+ --yellow:#FFC400;
+ --lavender:#999DDB;
+ --ink:#083E48;
+ --paper:#FFFFFF;
+ --soft:#F3F8F7;
+ font-family:Arial,Helvetica,sans-serif;
+ color-scheme:light;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;
+ background:linear-gradient(135deg,var(--teal) 0 23%,var(--paper) 23% 78%,var(--lavender) 78% 100%);
+ color:var(--ink);padding:28px;
+}
+.card{
+ width:min(980px,100%);margin:auto;background:rgba(255,255,255,.97);
+ border-radius:28px;padding:30px;box-shadow:0 18px 55px rgba(0,70,75,.18);
+ border:0;overflow:hidden;position:relative;
+}
+.card:before{
+ content:"";position:absolute;right:-80px;top:-100px;width:260px;height:260px;
+ background:var(--orange);border-radius:50%;opacity:.95;z-index:0
+}
+.card>*{position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:28px;margin-bottom:26px}
+.brand img{width:min(270px,42%);height:auto;background:white;padding:8px;border-radius:14px}
+.brand h1{margin:3px 0 4px;font-size:clamp(2rem,5vw,3.2rem);line-height:.95;color:var(--ink)}
+.brand h1 .titulo-principal{color:var(--ink)}
+.brand h1 .titulo-microbit{color:#FF5B24}
+.brand p{margin:0;font-weight:700;color:var(--orange)}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;font-weight:900;color:var(--teal)}
+h2{font-size:1.05rem;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 10px;color:var(--teal-dark)}
+button{
+ border:0;background:var(--teal-dark);color:#fff;border-radius:999px;padding:13px 20px;
+ font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 5px 0 rgba(0,73,76,.18)
+}
+button:hover{transform:translateY(-1px)}
+button:disabled{opacity:.72;cursor:default}
+button.active{background:var(--orange);color:white}
+#conectar{background:var(--yellow);color:var(--ink)}
+.status{margin:18px 0;padding:14px 16px;background:var(--soft);border-left:6px solid var(--teal);border-radius:10px}
+.instrumentos{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.readout{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+.box{background:var(--soft);border-radius:18px;padding:18px 8px;text-align:center;border:2px solid transparent}
+.box:nth-child(2){background:#FFF3D0}.box:nth-child(3){background:#F1EFFE}
+.box.ativo{border-color:var(--orange);background:#FFF0EA}
+.label{display:block;font-size:.82rem;font-weight:800;opacity:.65;text-transform:uppercase}
+.value{display:block;font-size:1.8rem;font-weight:900;margin-top:6px;color:var(--ink)}
+.bar{height:18px;background:#DDEDEC;border-radius:999px;overflow:hidden;margin:16px 0}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--yellow),var(--orange));transition:width .04s linear}
+.keys{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:18px 0}
+.key{background:var(--soft);border:2px solid #D6E8E6;border-radius:10px;padding:11px 4px;text-align:center;font-size:.8rem;font-weight:800}
+.key.active{background:var(--yellow);border-color:var(--orange);transform:translateY(-2px)}
+pre{min-height:65px;background:var(--ink);color:#E8FFFF;border-radius:14px;padding:14px;overflow:auto}
+.aviso{font-size:.9rem;opacity:.75;line-height:1.45}
+@media(max-width:700px){
+ body{padding:12px;background:var(--teal)}
+ .card{padding:20px;border-radius:20px}.brand{flex-direction:column;align-items:flex-start;gap:12px}
+ .brand img{width:230px;max-width:100%}.readout{grid-template-columns:1fr 1fr}.keys{grid-template-columns:repeat(5,1fr)}
+}
+
+.makecode-link{display:inline-flex;align-items:center;justify-content:center;margin:0 10px 0 0;padding:13px 20px;border-radius:999px;background:var(--orange);color:#fff;text-decoration:none;font-size:1rem;font-weight:800;box-shadow:0 5px 0 rgba(160,45,10,.18);transition:transform .15s ease}
+.makecode-link:hover{transform:translateY(-1px)}
+</style></head>
+<body><main class="card">
+<header class="brand">
+<div>
+  <span class="eyebrow">EXPERIÊNCIA MAKER</span>
+  <h1><span class="titulo-principal">Grafite Sonoro com</span><br><span class="titulo-microbit">BBC micro:bit</span></h1>
+  <p>Desenhe. Toque. Experimente.</p>
+</div>
+</header>
+<a class="makecode-link" href="https://makecode.microbit.org/S06649-73031-12375-61352" target="_blank" rel="noopener noreferrer">Acesse e instale o código para o BBC micro:bit</a>
+<button id="conectar">Conectar micro:bit</button>
+<div id="status" class="status">Aguardando conexão.</div>
+
+<h2>Som</h2>
+<div class="instrumentos">
+<button class="instrumento active" data-inst="pentatonica">♪ Pentatônica</button>
+<button class="instrumento" data-inst="piano">🎹 Piano</button>
+
+<button class="instrumento" data-inst="sintetizador">〰 Sintetizador</button>
+</div>
+
+<div class="readout">
+<div class="box"><span class="label">A0</span><span id="a0" class="value">--</span></div>
+<div class="box"><span class="label">Nota</span><span id="nota" class="value">--</span></div>
+<div class="box"><span class="label">Som</span><span id="instNome" class="value">Pentatônica</span></div>
+<div id="gateBox" class="box"><span class="label">Gate P1</span><span id="gate" class="value">0</span></div>
+</div>
+<div class="bar"><div id="fill" class="fill"></div></div>
+<div id="keys" class="keys"></div>
+<h2>Serial</h2><pre id="serial">Nenhum dado recebido.</pre>
+<p class="aviso">P0 escolhe a nota; P1 é o gate resistivo. Explore a cartolina condutiva escolhendo entre Pentatônica, Piano e Sintetizador.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const botao=$("conectar"),statusEl=$("status"),monitor=$("serial"),a0El=$("a0"),notaEl=$("nota"),fillEl=$("fill"),gateEl=$("gate"),gateBox=$("gateBox"),keysEl=$("keys"),instNome=$("instNome");
+const escala=[
+{nome:"C4",freq:261.63},{nome:"D4",freq:293.66},{nome:"E4",freq:329.63},{nome:"G4",freq:392.00},{nome:"A4",freq:440.00},
+{nome:"C5",freq:523.25},{nome:"D5",freq:587.33},{nome:"E5",freq:659.25},{nome:"G5",freq:783.99},{nome:"A5",freq:880.00}];
+let ctx=null,master=null,voice=null,inst="pentatonica",gate=false,idx=0;
+
+escala.forEach((n,i)=>{const d=document.createElement("div");d.className="key";d.id="key"+i;d.textContent=n.nome;keysEl.appendChild(d)});
+
+function audioStart(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.65;master.connect(ctx.destination);makeVoice()}if(ctx.state==="suspended")ctx.resume()}
+function kill(){if(!voice)return;try{voice.oscs.forEach(o=>o.stop())}catch(e){}try{voice.lfos.forEach(o=>o.stop())}catch(e){}voice=null}
+function osc(type,gain,dest){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;g.gain.value=gain;o.connect(g).connect(dest);o.start();return o}
+function makeVoice(){
+ if(!ctx)return;kill();
+ const out=ctx.createGain();out.gain.value=.0001;
+ const filter=ctx.createBiquadFilter();filter.type="lowpass";
+ const oscs=[],lfos=[];
+ if(inst==="pentatonica"){
+   filter.frequency.value=5000;filter.Q.value=.4;
+   oscs.push(osc("sine",.85,filter));
+ }else if(inst==="piano"){
+   filter.frequency.value=4200;filter.Q.value=.7;
+   oscs.push(osc("triangle",.75,filter),osc("sine",.18,filter),osc("sine",.07,filter));
+ }else if(inst==="__violino_removido"){
+   filter.frequency.value=3000;filter.Q.value=1.1;
+   const a=osc("sawtooth",.58,filter),b=osc("triangle",.28,filter);oscs.push(a,b);
+   const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=5.3;lg.gain.value=7;l.connect(lg);lg.connect(a.detune);lg.connect(b.detune);l.start();lfos.push(l);
+ }else{
+   // Sintetizador grave inspirado em guitarra passando por pedaleira:
+   // fundamental uma oitava abaixo, quinta, leve detune e filtro escuro.
+   filter.type="lowpass";filter.frequency.value=1050;filter.Q.value=1.6;
+
+   const a=osc("sawtooth",.34,filter);
+   const b=osc("square",.13,filter);
+   const c=osc("triangle",.28,filter);
+   const d=osc("sine",.30,filter);
+   oscs.push(a,b,c,d);
+
+   // Chorus/vibrato lento e discreto, semelhante a efeito de pedal.
+   const l=ctx.createOscillator(),lg=ctx.createGain();
+   l.frequency.value=3.2;lg.gain.value=7;
+   l.connect(lg);
+   lg.connect(a.detune);
+   lg.connect(c.detune);
+   l.start();lfos.push(l);
+
+   // Movimento lento do filtro, sem o caráter metálico anterior.
+   const l2=ctx.createOscillator(),lg2=ctx.createGain();
+   l2.frequency.value=.65;lg2.gain.value=180;
+   l2.connect(lg2);
+   lg2.connect(filter.frequency);
+   l2.start();lfos.push(l2);
+ }
+ filter.connect(out);out.connect(master);voice={out,filter,oscs,lfos};setFreq(escala[idx].freq);if(gate)on()
+}
+function setFreq(f){
+ if(!voice)return;const t=ctx.currentTime;
+ if(inst==="pentatonica"){voice.oscs[0].frequency.setTargetAtTime(f,t,.008)}
+ else if(inst==="piano"){voice.oscs[0].frequency.setTargetAtTime(f,t,.01);voice.oscs[1].frequency.setTargetAtTime(f*2,t,.01);voice.oscs[2].frequency.setTargetAtTime(f*3,t,.01)}
+ else if(inst==="__violino_removido"){voice.oscs[0].frequency.setTargetAtTime(f,t,.018);voice.oscs[1].frequency.setTargetAtTime(f*2,t,.018)}
+ else{
+   // Uma oitava abaixo da nota selecionada, com corpo de guitarra processada.
+   const base=f*.5;
+   voice.oscs[0].frequency.setTargetAtTime(base,t,.018);
+   voice.oscs[1].frequency.setTargetAtTime(base*1.5,t,.018);
+   voice.oscs[2].frequency.setTargetAtTime(base*1.003,t,.018);
+   voice.oscs[3].frequency.setTargetAtTime(base*.5,t,.018);
+   voice.filter.frequency.setTargetAtTime(Math.min(1500,650+f*.75),t,.04)
+ }
+}
+function on(){
+ if(!voice)return;const t=ctx.currentTime,g=voice.out.gain;g.cancelScheduledValues(t);g.setValueAtTime(Math.max(g.value,.0001),t);
+ if(inst==="piano"){g.exponentialRampToValueAtTime(.34,t+.012);g.exponentialRampToValueAtTime(.07,t+1)}
+ else if(inst==="__violino_removido"){g.exponentialRampToValueAtTime(.20,t+.12)}
+ else if(inst==="sintetizador"){g.exponentialRampToValueAtTime(.20,t+.025)}
+ else{g.exponentialRampToValueAtTime(.22,t+.012)}
+}
+function off(){if(!voice)return;const t=ctx.currentTime,g=voice.out.gain;g.cancelScheduledValues(t);g.setValueAtTime(Math.max(g.value,.0001),t);g.exponentialRampToValueAtTime(.0001,t+(inst==="__violino_removido"?.09:.04))}
+function note(v){
+ let n=Math.floor(v/1024*escala.length);n=Math.max(0,Math.min(escala.length-1,n));const changed=n!==idx;idx=n;
+ a0El.textContent=v;notaEl.textContent=escala[n].nome;fillEl.style.width=(v/1023*100).toFixed(1)+"%";
+ escala.forEach((_,i)=>$("key"+i).classList.toggle("active",i===n));setFreq(escala[n].freq);if(changed&&gate&&inst==="piano")on()
+}
+function setGate(v){const ng=v===1;if(ng!==gate){gate=ng;gate?on():off()}gateEl.textContent=v;gateBox.classList.toggle("ativo",gate)}
+document.querySelectorAll(".instrumento").forEach(b=>b.onclick=()=>{inst=b.dataset.inst;document.querySelectorAll(".instrumento").forEach(x=>x.classList.remove("active"));b.classList.add("active");instNome.textContent={pentatonica:"Pentatônica",piano:"Piano",sintetizador:"Sintetizador"}[inst];if(ctx)makeVoice()});
+
+botao.onclick=async()=>{
+ if(!("serial"in navigator)){statusEl.textContent="Use Chrome ou Edge em uma página HTTPS.";return}
+ let port,reader;
+ try{
+  audioStart();statusEl.textContent="Escolha a porta do micro:bit...";port=await navigator.serial.requestPort();await port.open({baudRate:115200});
+  botao.textContent="micro:bit conectado ✓";botao.disabled=true;statusEl.textContent="Conectado. Toque o gate e explore o desenho.";
+  const decoder=new TextDecoderStream();port.readable.pipeTo(decoder.writable);reader=decoder.readable.getReader();let buffer="";
+  while(true){const {value,done}=await reader.read();if(done)break;if(!value)continue;buffer+=value;const linhas=buffer.split(/\r?\n/);buffer=linhas.pop()??"";
+   for(const raw of linhas){const line=raw.trim();if(!line)continue;monitor.textContent=line;
+    let m=line.match(/^A0:\s*(\d{1,4})$/);if(m){note(Math.max(0,Math.min(1023,Number(m[1]))));continue}
+    m=line.match(/^GATE:\s*([01])$/);if(m)setGate(Number(m[1]));
+   }
+  }
+ }catch(e){statusEl.textContent="Erro: "+(e?.message||String(e));botao.disabled=false;botao.textContent="Conectar micro:bit"}
+ finally{if(reader)try{reader.releaseLock()}catch(e){}}
+};
+</script></body></html>
